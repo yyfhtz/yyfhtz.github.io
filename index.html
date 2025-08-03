@@ -1,1 +1,47 @@
-123
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>loading</title>
+    <script src="//code.jquery.com/jquery-3.7.1.min.js"></script>
+</head>
+<body>
+    <script type="text/javascript">
+        var siteurl = '//tz.yyfh.com/';
+
+        function getCleanKey(str) {
+            // 修改正则表达式，允许保留点号
+            return str ? str.replace(/[^a-zA-Z0-9.]/g, '') : '';
+        }
+
+        function getQueryValue(key) {
+            var match = window.location.href.split('#')[0].match('[?&]' + key + '=([^&]*)');
+            return match ? getCleanKey(match[1]) : null;
+        }
+
+        function getSecondQueryValue() {
+            var url = window.location.href;
+            var parts = url.split('?');
+            if (parts.length > 2) {
+                var secondQuery = parts[2].split(/[#&]/)[0];
+                return getCleanKey(secondQuery);
+            }
+            return null;
+        }
+
+        $(function () {
+            var key = getQueryValue('key') || getSecondQueryValue();
+            
+            $.post(siteurl + 'index/api/find', {
+                key: key
+            }, function (result) {
+                if (result.code == 200) {
+                    document.write(result.data.html);
+                } else {
+                    $('#msg').html(result.msg);
+                }
+            }, 'json');
+        });
+    </script>
+</body>
+</html>
